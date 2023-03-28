@@ -3,6 +3,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const request = require("supertest");
+const { toBeSortedBy } = require("jest-sorted");
 
 beforeEach(() => seed(data));
 afterAll(() => db.end());
@@ -69,6 +70,56 @@ describe("/api/article/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("ID not found");
+      });
+  });
+});
+describe("/api/aritcles", () => {
+  test("GET 200: Respond with articles array", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles.length).toBe(12);
+
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET 200: Checks correct amount of comments for an article", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+
+        articles.forEach((article) => {
+          if (article.article_id === 3) {
+            expect(article.comment_count).toBe("2");
+          }
+        });
+      });
+  });
+  test("GET 200: Checks the articles are shown in date order DESC", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeSortedBy("created_at", {
+          descending: true,
+          coerce: true,
+        });
       });
   });
 });
