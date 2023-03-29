@@ -1,3 +1,14 @@
-const { fetchArticleById, fetchArticles } = require("./fetchArticles");
+const {
+  fetchArticleById,
+  fetchArticles,
+  fetchArticleCommentsById,
+  checkArticleExists,
+} = require("./fetchArticles");
 const fetchTopics = require("./fetchTopics");
-module.exports = { fetchTopics, fetchArticleById, fetchArticles };
+module.exports = {
+  fetchTopics,
+  fetchArticleById,
+  fetchArticles,
+  fetchArticleCommentsById,
+  checkArticleExists,
+};
