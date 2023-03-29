@@ -123,3 +123,67 @@ describe("/api/aritcles", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("GET 200: Respond with articles array with only comments from article chosen", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments.length).toBe(2);
+
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: 3,
+          });
+        });
+      });
+  });
+  test("GET 200: Respond with articles array that shows most recent comments first", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+
+        expect(comments).toBeSortedBy("created_at", {
+          descending: true,
+          coerce: true,
+        });
+      });
+  });
+  test("GET 200: Respond with an empty array if passed an article that exists with zero comments", () => {
+    return request(app)
+      .get("/api/articles/11/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments.length).toBe(0);
+        expect(comments).toBeInstanceOf(Array);
+      });
+  });
+  test("GET 404: Respond with 'ID not found' if article does not exist", () => {
+    return request(app)
+      .get("/api/articles/99999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+  test("GET 400: Respond with 'ID not found' if article does not exist", () => {
+    return request(app)
+      .get("/api/articles/not_a_number/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID");
+      });
+  });
+});
