@@ -3,7 +3,8 @@ const {
   fetchArticles,
   fetchArticleCommentsById,
   checkArticleExists,
-} = require("./fetchArticles");
+  createArticleCommentById,
+} = require("./ArticleModels");
 const fetchTopics = require("./fetchTopics");
 module.exports = {
   fetchTopics,
@@ -11,4 +12,5 @@ module.exports = {
   fetchArticles,
   fetchArticleCommentsById,
   checkArticleExists,
+  createArticleCommentById,
 };

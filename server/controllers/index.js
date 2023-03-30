@@ -2,6 +2,7 @@ const {
   getArticles,
   getArticleById,
   getArticleCommentsById,
+  postArticleCommentById,
 } = require("./getArticles");
 const getTopics = require("./getTopics");
 const errorHandlerPSQL = require("./errorHandlerPSQL");
@@ -14,4 +15,5 @@ module.exports = {
   errorHandlerCustom,
   errorHandlerPSQL,
   getArticleCommentsById,
+  postArticleCommentById,
 };
