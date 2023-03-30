@@ -245,4 +245,15 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Invalid ID");
       });
   });
+  test("POST 400: Respond with 'Missing feilds' if a feild is missing", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        username: "lurker",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing feild");
+      });
+  });
 });
