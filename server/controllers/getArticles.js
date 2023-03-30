@@ -4,6 +4,7 @@ const {
   fetchArticleCommentsById,
   checkArticleExists,
   createArticleCommentById,
+  editArticleVotes,
 } = require("../models");
 
 getArticleById = (req, res, next) => {
@@ -45,9 +46,24 @@ postArticleCommentById = (req, res, next) => {
       next(err);
     });
 };
+patchArticleVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const { body } = req;
+  editArticleVotes(article_id, body)
+    .then((data) => {
+      res.status(200).send({
+        updatedArticle: data,
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getArticleById,
   getArticles,
   getArticleCommentsById,
   postArticleCommentById,
+  patchArticleVotes,
 };

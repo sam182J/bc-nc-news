@@ -59,6 +59,38 @@ const createArticleCommentById = (id, comment) => {
     }
   });
 };
+const editArticleVotes = (id, votes) => {
+  const { inc_votes } = votes;
+  if (typeof inc_votes !== "number") {
+    return Promise.reject({
+      status: 400,
+      msg: "inc_votes is not a valid number",
+    });
+  }
+  if (!Number.isInteger(inc_votes)) {
+    return Promise.reject({
+      status: 400,
+      msg: "inc_votes is not an interger",
+    });
+  }
+  return db
+    .query(
+      `
+          UPDATE articles
+          SET
+          votes=votes+$2
+          WHERE article_id =$1
+          RETURNING *
+      `,
+      [id, inc_votes]
+    )
+    .then(({ rows }) => {
+      if (!rows.length) {
+        return checkArticleExists(id);
+      }
+      return rows[0];
+    });
+};
 
 const checkArticleExists = async (id) => {
   const queryStr = "SELECT * FROM articles WHERE article_id=$1;";
@@ -85,4 +117,5 @@ module.exports = {
   fetchArticleCommentsById,
   checkArticleExists,
   createArticleCommentById,
+  editArticleVotes,
 };
