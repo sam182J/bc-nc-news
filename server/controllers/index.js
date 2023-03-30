@@ -6,6 +6,7 @@ const {
   patchArticleVotes,
 } = require("./getArticles");
 const deleteCommentById = require("./commentControllers");
+const getUsers = require("./userControllers");
 const getTopics = require("./getTopics");
 const errorHandlerPSQL = require("./errorHandlerPSQL");
 const errorHandlerCustom = require("./errorHandlerCustom");
@@ -20,4 +21,5 @@ module.exports = {
   postArticleCommentById,
   patchArticleVotes,
   deleteCommentById,
+  getUsers,
 };
