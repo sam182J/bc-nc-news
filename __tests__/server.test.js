@@ -257,3 +257,96 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("200:PATCH /api/articles/:article_id", () => {
+  test("patch 200: Respond with updated article", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({
+        inc_votes: 1,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: 1,
+        });
+      });
+  });
+  test("patch 200: Respond with updated article, check if works for negative input", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({
+        inc_votes: -1,
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { updatedArticle } = body;
+        expect(updatedArticle).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: -1,
+        });
+      });
+  });
+  test("patch 404: Respond with 'ID not found' if article doesnt exist", () => {
+    return request(app)
+      .patch("/api/articles/9999")
+      .send({
+        inc_votes: -1,
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+  test("patch 400: Respond with 'Invalid ID' if article doesnt exist", () => {
+    return request(app)
+      .patch("/api/articles/not_a_number")
+      .send({
+        inc_votes: -1,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID");
+      });
+  });
+  test("patch 400: Respond with not valid number if passed an object with a value not a number", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({
+        inc_votes: "string",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("inc_votes is not a valid number");
+      });
+  });
+  test("patch 400: Respond with not an int if not an int", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({
+        inc_votes: 1.1,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("inc_votes is not an interger");
+      });
+  });
+  test("patch 400: Respond with inc_votes is not a valid number if passed nothing", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("inc_votes is not a valid number");
+      });
+  });
+});
