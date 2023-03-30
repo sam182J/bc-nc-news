@@ -187,3 +187,62 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST 200: Respond with new posted comment", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        body: "Hello test1 from seank",
+        username: "lurker",
+      })
+      .expect(200)
+      .then(({ body }) => {
+        const { newComment } = body;
+        expect(newComment).toMatchObject({
+          comment_id: expect.any(Number),
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+          author: "lurker",
+          body: "Hello test1 from seank",
+          article_id: 3,
+        });
+      });
+  });
+  test("POST 404: Respond with 'ID not found' if article doesnt exist", () => {
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send({
+        body: "Hello test1 from seank",
+        username: "lurker",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+  test("POST 404: Respond with 'Username not found' if username not in the database", () => {
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send({
+        body: "Hello test1 from seank",
+        username: "lurkererere",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username not found");
+      });
+  });
+  test("POST 400: Respond with 'Invalid ID' if endpoint is invalid", () => {
+    return request(app)
+      .post("/api/articles/not_a_number/comments")
+      .send({
+        body: "Hello test1 from seank",
+        username: "lurker",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID");
+      });
+  });
+});

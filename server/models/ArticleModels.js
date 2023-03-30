@@ -39,6 +39,27 @@ const fetchArticleCommentsById = (id) => {
   });
 };
 
+const createArticleCommentById = (id, comment) => {
+  const { body, username } = comment;
+  return checkUsernameExists(username).then((result) => {
+    if (result.length > 0) {
+      return db
+        .query(
+          `
+          INSERT INTO comments
+          (author, body, votes,  article_id,created_at)
+          VALUES($1, $2, $3, $4,$5)
+          RETURNING *
+      `,
+          [username, body, 0, id, new Date()]
+        )
+        .then(({ rows }) => {
+          return rows[0];
+        });
+    }
+  });
+};
+
 const checkArticleExists = async (id) => {
   const queryStr = "SELECT * FROM articles WHERE article_id=$1;";
   const dbOutput = await db.query(queryStr, [id]);
@@ -49,9 +70,19 @@ const checkArticleExists = async (id) => {
   }
 };
 
+const checkUsernameExists = async (username) => {
+  const queryStr = "SELECT * FROM users WHERE username=$1;";
+  const dbOutput = await db.query(queryStr, [username]);
+  if (dbOutput.rows.length === 0) {
+    return Promise.reject({ status: 404, msg: "Username not found" });
+  } else {
+    return dbOutput.rows;
+  }
+};
 module.exports = {
   fetchArticleById,
   fetchArticles,
   fetchArticleCommentsById,
   checkArticleExists,
+  createArticleCommentById,
 };

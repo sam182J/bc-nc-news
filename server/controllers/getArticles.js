@@ -3,6 +3,7 @@ const {
   fetchArticles,
   fetchArticleCommentsById,
   checkArticleExists,
+  createArticleCommentById,
 } = require("../models");
 
 getArticleById = (req, res, next) => {
@@ -30,4 +31,23 @@ getArticleCommentsById = (req, res, next) => {
 
     .catch((err) => next(err));
 };
-module.exports = { getArticleById, getArticles, getArticleCommentsById };
+
+postArticleCommentById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { body } = req;
+  createArticleCommentById(article_id, body)
+    .then((data) => {
+      res.status(200).send({
+        newComment: data,
+      });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+module.exports = {
+  getArticleById,
+  getArticles,
+  getArticleCommentsById,
+  postArticleCommentById,
+};
