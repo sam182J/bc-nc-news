@@ -307,7 +307,7 @@ describe("200:PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("ID not found");
       });
   });
-  test("patch 400: Respond with 'Invalid ID' if article doesnt exist", () => {
+  test("patch 400: Respond with 'Invalid ID' if article cant exist", () => {
     return request(app)
       .patch("/api/articles/not_a_number")
       .send({
