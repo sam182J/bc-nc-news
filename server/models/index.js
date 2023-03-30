@@ -7,6 +7,7 @@ const {
   editArticleVotes,
 } = require("./ArticleModels");
 const fetchTopics = require("./fetchTopics");
+const removeCommentById = require("./commentModels");
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -15,4 +16,5 @@ module.exports = {
   checkArticleExists,
   createArticleCommentById,
   editArticleVotes,
+  removeCommentById,
 };

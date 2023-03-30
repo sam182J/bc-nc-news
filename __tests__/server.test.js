@@ -350,3 +350,34 @@ describe("200:PATCH /api/articles/:article_id", () => {
       });
   });
 });
+describe("204:DELETE /api/comments/comment_id", () => {
+  test("204 DELETE responds with 204, checks comment is actually deleted by trying to delete again", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return request(app)
+          .delete("/api/comments/1")
+          .expect(404)
+          .then(({ body }) => {
+            expect(body.msg).toBe("ID not found");
+          });
+      });
+  });
+  test("404 DELETE responds with 404 ID not found if cant find comment id", () => {
+    return request(app)
+      .delete("/api/comments/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("ID not found");
+      });
+  });
+  test("400 DELETE responds with 400 Invalid ID if not valid id given in endpoint", () => {
+    return request(app)
+      .delete("/api/comments/not_a_number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid ID");
+      });
+  });
+});
