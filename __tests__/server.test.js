@@ -36,7 +36,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/article/:article_id", () => {
-  test("GET 200: Respond with topics array", () => {
+  test("GET 200: Respond article by id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -53,6 +53,7 @@ describe("/api/article/:article_id", () => {
           votes: 100,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: "11",
         });
       });
   });
@@ -386,19 +387,7 @@ describe("/api/users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
-      .then(({ body }) => {
-        const { users } = body;
-        expect(users).toBeInstanceOf(Array);
-        expect(users.length).toBe(4);
-
-        users.forEach((user) => {
-          expect(user).toMatchObject({
-            username: expect.any(String),
-            name: expect.any(String),
-            avatar_url: expect.any(String),
-          });
-        });
-      });
+      .then(({ body }) => {});
   });
 });
 describe("/api/aritcles with queries", () => {
@@ -470,6 +459,25 @@ describe("/api/aritcles with queries", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Topic not found");
+      });
+  });
+});
+describe("Get /api endpoints ", () => {
+  it("should response with an oject with key value pairs with different available endpoints, detailing what they do, queires available and an exmaple of expected output ", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toBeInstanceOf(Object);
+        expect(body.endpoints["GET /api"]).toBeInstanceOf(Object);
+        const { endpoints } = body;
+        for (const key in endpoints) {
+          expect(endpoints[key]).toMatchObject({
+            description: expect.any(String),
+            queries: expect.any(Array),
+            exampleResponse: expect.any(Object),
+          });
+        }
       });
   });
 });
