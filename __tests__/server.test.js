@@ -36,7 +36,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/article/:article_id", () => {
-  test("GET 200: Respond with topics array", () => {
+  test("GET 200: Respond article by id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -53,6 +53,7 @@ describe("/api/article/:article_id", () => {
           votes: 100,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: "11",
         });
       });
   });
