@@ -462,8 +462,8 @@ describe("/api/aritcles with queries", () => {
       });
   });
 });
-describe("Get /api ", () => {
-  it("should get an oject with key endpoints and be able to access the different endpoints ", () => {
+describe("Get /api endpoints ", () => {
+  it("should response with an oject with key value pairs with different available endpoints, detailing what they do, queires available and an exmaple of expected output ", () => {
     return request(app)
       .get("/api")
       .expect(200)
