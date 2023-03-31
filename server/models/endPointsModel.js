@@ -1,4 +1,4 @@
-const fs = require("node:fs/promises");
+const fs = require("fs-promise");
 function fetchEndpoints() {
   return fs
     .readFile(`${__dirname}/../../endpoints.json`, "utf8")
