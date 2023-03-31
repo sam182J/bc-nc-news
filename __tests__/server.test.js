@@ -401,3 +401,75 @@ describe("/api/users", () => {
       });
   });
 });
+describe("/api/aritcles with queries", () => {
+  test("GET 200: Respond with articles array, with filter by topics", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles.length).toBe(1);
+
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: "cats",
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET 200: Respond with articles array, with correct sort by and order by criteria and a topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=comment_count&order_by=ASC")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles.length).toBe(11);
+        expect(articles).toBeSortedBy("comment_count", {
+          descending: false,
+          coerce: true,
+        });
+      });
+  });
+  test("GET 400: Respond error messge if invalid sort query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=DROP&order_by=ASC")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Sort Query");
+      });
+  });
+  test("GET 400: Respond error messge if invalid order_By query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&order_by=PERS")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order Query");
+      });
+  });
+  test("GET 200: Respond with empty array if topic exists but no articles are about that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles.length).toBe(0);
+      });
+  });
+  test("GET 404: Respond error messge if topic filter doesnt exist", () => {
+    return request(app)
+      .get("/api/articles?topic=notmitch")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic not found");
+      });
+  });
+});
