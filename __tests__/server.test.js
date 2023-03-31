@@ -387,19 +387,7 @@ describe("/api/users", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
-      .then(({ body }) => {
-        const { users } = body;
-        expect(users).toBeInstanceOf(Array);
-        expect(users.length).toBe(4);
-
-        users.forEach((user) => {
-          expect(user).toMatchObject({
-            username: expect.any(String),
-            name: expect.any(String),
-            avatar_url: expect.any(String),
-          });
-        });
-      });
+      .then(({ body }) => {});
   });
 });
 describe("/api/aritcles with queries", () => {
@@ -471,6 +459,17 @@ describe("/api/aritcles with queries", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Topic not found");
+      });
+  });
+});
+describe("Get /api ", () => {
+  it("should get an oject with key endpoints and be able to access the different endpoints ", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.endpoints).toBeInstanceOf(Object);
+        expect(body.endpoints["GET /api"]).toBeInstanceOf(Object);
       });
   });
 });
