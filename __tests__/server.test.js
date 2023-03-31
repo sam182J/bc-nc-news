@@ -470,6 +470,14 @@ describe("Get /api ", () => {
       .then(({ body }) => {
         expect(body.endpoints).toBeInstanceOf(Object);
         expect(body.endpoints["GET /api"]).toBeInstanceOf(Object);
+        const { endpoints } = body;
+        for (const key in endpoints) {
+          expect(endpoints[key]).toMatchObject({
+            description: expect.any(String),
+            queries: expect.any(Array),
+            exampleResponse: expect.any(Object),
+          });
+        }
       });
   });
 });
